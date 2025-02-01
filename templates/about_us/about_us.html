@@ -1,0 +1,100 @@
+<!doctype html>
+{% load static %}
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Major Depressive Disorder</title>
+    <link href="{% static "css/bootstrap.min.css" %}" rel="stylesheet" integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
+    <link rel="stylesheet" href="{% static 'css/main.css' %}">
+    <link rel="stylesheet" href="{% static "css/fontawesome.min.css" %}">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Jersey+25&display=swap" rel="stylesheet">
+  </head>
+  <body>
+    <nav class="navbar navbar-expand-lg bg-body-tertiary fill">
+        <div class="container">
+          <a class="navbar-brand" href="{% url "landing_page" %}"><img src="{% static "img/logo.png" %}" class="img-fluid rounded-5" alt="..." height="60" style="height:60px"> <b>MDD</b>Predict</a>
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+          </button>
+          <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav ms-auto">
+              <li class="nav-item">
+                <a class="nav-link" aria-current="page" href="{% url "landing_page" %}">Home</a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" href="{% url 'predict' %}">Predict</a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" href="{% url "train" %}">Train</a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" href="{% url "test" %}">Test</a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link active" href="#">About</a>
+              </li>
+
+            </ul>
+          </div>
+        </div>
+    </nav>
+
+    <section class="bg-success">
+      <div class="container">
+        <div class="row align-items-center py-5">
+          <div class="col-md-2"></div>
+          <div class="col-md-4 text-light">
+            <h3><span class="fw-bold">Name</span>: Rahat Parvej</h3>
+            
+            <p class="fw-bolder">Designer &amp; Developer of the project</p>
+            <span>Dept. of Computer Science &amp; Engineering<br>Jatiya Kabi Kazi Nazrul Islam University</span><br><br>
+            <a href="https://www.facebook.com/rahat.parvej.184/" class="text-decoration-none text-dark" ><i
+                class="fa-brands fa-square-facebook fs-1"></i></a>&nbsp;&nbsp;&nbsp; <a
+              href="www.linkedin.com/in/rahatparvej2" class="text-decoration-none text-dark" ><i
+                class="fa-brands fa-linkedin fs-1"></i></a>&nbsp;&nbsp;&nbsp;
+                <a href="mailto:rahatparvej2@gmail.com" class="text-decoration-none text-dark" ><i class="fa-solid fa-envelope fs-1"></i></a>
+                
+                
+
+          </div>
+          <div class="col-md-4">
+            <img src="{% static 'img/rahat.JPG' %} " class="rounded-circle mx-auto d-block" alt="..." height="300">
+          </div>
+          <div class="col-md-2"></div>
+        </div>
+      </div>
+    </section>
+    <section class="bg-danger">
+      <div class="container">
+        <div class="row  align-items-center py-5">
+          <div class="col-md-2"></div>
+          <div class="col-md-4"><img src="{% static 'img/PP-Pic-2-247x300.jpg' %} "
+              class="rounded-circle  d-block" alt="..."></div>
+          <div class="col-md-4 text-light">
+            <h3><span class="fw-bold">Name</span>: Dr. A. H. M. Kamal</h3>
+            <p><span class="fw-bold">Designation:</span> Professor</p>
+            <p class="fw-bolder">Supervisor of the project</p>
+            <span>Dept. of Computer Science &amp; Engineering<br>Jatiya Kabi Kazi Nazrul Islam University</span><br><br>
+            <a href="https://www.facebook.com/ahm.kamal.566" class="text-decoration-none text-dark"><i
+                class="fa-brands fa-square-facebook fs-1"></i></a>&nbsp;&nbsp;&nbsp; <a
+              href="https://www.linkedin.com/in/ahm-kamal-5237534/" class="text-decoration-none text-dark"><i
+                class="fa-brands fa-linkedin fs-1"></i></a>
+
+          </div>
+          <div class="col-md-2"></div>
+        </div>
+      </div>
+    </section>
+
+
+
+
+
+
+    <script src="{% static "js/bootstrap.bundle.min.js" %}" integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL" crossorigin="anonymous"></script>
+    <script src="{% static "js/main.js" %}"></script>
+  </body>
+</html>

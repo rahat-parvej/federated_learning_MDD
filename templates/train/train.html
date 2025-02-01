@@ -1,0 +1,70 @@
+<!doctype html>
+{% load static %}
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Major Depressive Disorder</title>
+    <link href="{% static "css/bootstrap.min.css" %}" rel="stylesheet" integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
+    <link rel="stylesheet" href="{% static 'css/main.css' %}">
+    <link rel="stylesheet" href="{% static "css/fontawesome.min.css" %}">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Jersey+25&display=swap" rel="stylesheet">
+  </head>
+  <body>
+    <nav class="navbar navbar-expand-lg bg-body-tertiary fill">
+        <div class="container">
+          <a class="navbar-brand" href="{% url "landing_page" %}"><img src="{% static "img/logo.png" %}" class="img-fluid rounded-5" alt="..." height="60" style="height:60px"> <b>MDD</b>Predict</a>
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+          </button>
+          <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav ms-auto">
+              <li class="nav-item">
+                <a class="nav-link" aria-current="page" href="{% url "landing_page" %}">Home</a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" href="{% url 'predict' %}">Predict</a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link active" href="#">Train</a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" href="{% url "test" %}">Test</a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" href="{% url "about" %}">About</a>
+              </li>
+
+            </ul>
+          </div>
+        </div>
+    </nav>
+
+    <section class="pt-3">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-2"></div>
+                <div class="col-md-8">
+                    <form action="{% url "training_going" %}" method="post" enctype="multipart/form-data">
+                        {% csrf_token %}
+                        <div class="mb-3">
+                            <label for="formFile" class="form-label">Select the EEG file</label>
+                            <input class="form-control" name="test_file" type="file" id="formFile" accept=".zip" >
+                            <div id="emailHelp" class="form-text px-5">The file must have to be <b class="text-danger fs-5">.zip</b> formate and has to contain <b>EEG Signal</b> of at least <b>20 channels</b> [Chanel names: 'EEG Fp1-LE', 'EEG F3-LE', 'EEG C3-LE', 'EEG P3-LE', 'EEG O1-LE', 'EEG F7-LE', 'EEG T3-LE', 'EEG T5-LE', 'EEG Fz-LE', 'EEG Fp2-LE', 'EEG F4-LE', 'EEG C4-LE', 'EEG P4-LE', 'EEG O2-LE', 'EEG F8-LE', 'EEG T4-LE', 'EEG T6-LE', 'EEG Cz-LE', 'EEG Pz-LE', 'EEG A2-A1']</div>
+                        </div>
+                        <button type="submit" class="btn btn-primary">Submit</button>
+                    </form>
+                    
+                </div>
+                <div class="col-md-2"></div>
+            </div>
+        </div>
+    </section>
+
+
+    <script src="{% static "js/bootstrap.bundle.min.js" %}" integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL" crossorigin="anonymous"></script>
+    <script src="{% static "js/main.js" %}"></script>
+  </body>
+</html>
