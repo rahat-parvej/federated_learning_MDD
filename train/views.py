@@ -93,7 +93,7 @@ def training_going(request):
         def train_local_model(model, data_X, data_y):
             model.compile('adam', loss='binary_crossentropy', metrics=['Accuracy', 'Precision', 'Recall', 'AUC'])
             model.fit(data_X, data_y,epochs=21,batch_size=25)
-            # history = model.fit(data_X,data_y,epochs=30,batch_size=25)
+            # model.fit(data_X,data_y,epochs=30,batch_size=25)
             return model, model.history, len(data_y)
         
         # Initialize global model
@@ -125,9 +125,9 @@ def training_going(request):
 
             trained_models_avg, avg_model_history, avg_data_len=train_local_model(global_model_avg, X, y)
 
-            np.save(f'models/results/d1/client_model_loss_history.npy', loss_model_history.history)
-            np.save(f'models/results/d1/client_model_sample_history.npy', sample_model_history.history)
-            np.save(f'models/results/d1/client_model_avg_history.npy', avg_model_history.history)
+            np.save(f'models/results/d8/client_model_loss_history.npy', loss_model_history.history)
+            np.save(f'models/results/d8/client_model_sample_history.npy', sample_model_history.history)
+            np.save(f'models/results/d8/client_model_avg_history.npy', avg_model_history.history)
 
             losses=[]
             samples=[]
