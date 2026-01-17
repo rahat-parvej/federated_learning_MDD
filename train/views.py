@@ -92,8 +92,8 @@ def training_going(request):
         callback = tf.keras.callbacks.EarlyStopping(monitor='loss',mode="min", patience=3)
         def train_local_model(model, data_X, data_y):
             model.compile('adam', loss='binary_crossentropy', metrics=['Accuracy', 'Precision', 'Recall', 'AUC'])
-            model.fit(data_X, data_y,epochs=21,batch_size=25)
-            # model.fit(data_X,data_y,epochs=30,batch_size=25)
+            # model.fit(data_X, data_y,epochs=21,batch_size=25)
+            model.fit(data_X,data_y,epochs=30,batch_size=25,callbacks=[callback])
             return model, model.history, len(data_y)
         
         # Initialize global model
@@ -107,6 +107,8 @@ def training_going(request):
 
         
         global_model_avg = tf.keras.models.load_model("models/with_avg/model.h5")
+
+        global_model_fednova = tf.keras.models.load_model("models/with_fednova/model.h5")
                
 
         
@@ -125,9 +127,12 @@ def training_going(request):
 
             trained_models_avg, avg_model_history, avg_data_len=train_local_model(global_model_avg, X, y)
 
-            np.save(f'models/results/d8/client_model_loss_history.npy', loss_model_history.history)
-            np.save(f'models/results/d8/client_model_sample_history.npy', sample_model_history.history)
-            np.save(f'models/results/d8/client_model_avg_history.npy', avg_model_history.history)
+            trained_models_fednova, fednova_model_history, fednova_data_len=train_local_model(global_model_fednova, X, y)
+
+            np.save(f'models/results/d4/client_model_loss_history.npy', loss_model_history.history)
+            np.save(f'models/results/d4/client_model_sample_history.npy', sample_model_history.history)
+            np.save(f'models/results/d4/client_model_avg_history.npy', avg_model_history.history)
+            np.save(f'models/results/d4/client_model_fednova_history.npy', fednova_model_history.history)
 
             losses=[]
             samples=[]
@@ -163,6 +168,12 @@ def training_going(request):
         
         filename = "models/updated_weights_avg/weights"+ ip_address+"_" + current_time + ".weights.h5"
         global_model_avg.save_weights(filename, overwrite=False)
+
+        #for fednova
+        updated_weights_fednova=trained_models_fednova.get_weights()
+        global_model_fednova.set_weights(updated_weights_fednova)
+        filename = "models/updated_weights_fednova/weights"+ ip_address+"_" + current_time + ".weights.h5"
+        global_model_fednova.save_weights(filename, overwrite=False)
 
 
 

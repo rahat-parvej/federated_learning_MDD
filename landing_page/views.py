@@ -2,6 +2,7 @@ import os
 from django.http import HttpResponse
 from django.shortcuts import render
 import tensorflow as tf
+import numpy as np
 
 from tensorflow.keras.layers import Conv1D,BatchNormalization,LeakyReLU,MaxPool1D,\
 GlobalAveragePooling1D,Dense,Dropout,AveragePooling1D, Input
@@ -48,16 +49,95 @@ def landing_page_view(request):
         
         return model
     
+    def fednova_aggregate(weight_files, sample_counts, epochs_list=None, batch_size=25):
+        """
+        FedNova aggregation from saved weight files
+        
+        Args:
+            weight_files: List of paths to .weights.h5 files
+            sample_counts: List of sample counts for each client
+            epochs_list: List of epochs each client trained (default: 30)
+            batch_size: Batch size used (default: 25)
+        
+        Returns:
+            Aggregated weights
+        """
+        
+        n_clients = len(weight_files)
+        
+        # Default epochs (from your training_going: epochs=21)
+        if epochs_list is None:
+            epochs_list = [30] * n_clients
+        
+        # Parameters for Adam optimizer (which you're using)
+        beta = 0.9  # Momentum parameter β₁ for Adam
+        
+        # Step 1: Load all client weights
+        client_weights = []
+        for weight_file in weight_files:
+            # Create a model instance
+            model = cnnmodel()  # Your model architecture function
+            model.load_weights(weight_file)
+            client_weights.append(model.get_weights())
+        
+        # Step 2: Calculate FedNova normalization coefficients
+        normalization_coeffs = []
+        
+        for i in range(n_clients):
+            n_samples = sample_counts[i]
+            n_epochs = epochs_list[i]
+            
+            # Calculate number of local steps/batches
+            n_batches = n_samples // batch_size
+            if n_samples % batch_size != 0:
+                n_batches += 1
+            
+            local_steps = n_epochs * n_batches
+            
+            # FedNova normalization: τ_eff = (1 - β^local_steps) / (1 - β)
+            if local_steps > 0:
+                tau_eff = (1 - beta**local_steps) / (1 - beta)
+            else:
+                tau_eff = 1
+            
+            normalization_coeffs.append(tau_eff)
+        
+        # Step 3: Calculate normalized weights
+        total_normalized_weight = 0
+        n_layers = len(client_weights[0])
+        
+        # Initialize aggregated weights
+        aggregated_weights = [np.zeros_like(client_weights[0][j]) for j in range(n_layers)]
+        
+        for i in range(n_clients):
+            # FedNova weight: samples / τ_eff
+            weight = sample_counts[i] / normalization_coeffs[i]
+            total_normalized_weight += weight
+            
+            # Add weighted contribution
+            for j in range(n_layers):
+                aggregated_weights[j] += weight * client_weights[i][j]
+        
+        # Step 4: Normalize by total weight
+        for j in range(n_layers):
+            aggregated_weights[j] = aggregated_weights[j] / total_normalized_weight
+        
+        return aggregated_weights
+
+
+
     # Specify the folder containing the model files
     weights_path_loss = "models/updated_weights_loss"
     # base_model_loss=tf.keras.models.load_model("models/with_loss/model.h5")
     weights_path_sample = "models/updated_weights_sample"
     weights_path_avg = "models/updated_weights_avg"
+    weights_path_fednova = "models/updated_weights_fednova"
 
     # Load the models
     models_loss = []
     models_sample = []
     models_avg = []
+    models_fednova = []
     with open('models/losses/losses_list.txt', 'r') as file:
         # Read the lines and store them in a list
         losses =  [float(line.strip()) for line in file.readlines()]
@@ -95,11 +175,41 @@ def landing_page_view(request):
             model_avg.load_weights(model_path_avg)
             models_avg.append(model_avg)
             j=j+1
-    if k>=2:
+    l = 0
+    models_fednova = []
+    for file_name in os.listdir(weights_path_fednova):
+        if file_name.endswith(".h5"):
+            model_path_fednova = os.path.join(weights_path_fednova, file_name)
+            model_fednova = cnnmodel()
+            model_fednova.load_weights(model_path_fednova)
+            # Use the same sample counts as sample models
+            if l < len(data_lens):
+                models_fednova.append((model_fednova, data_lens[l]))
+                l += 1
+
+    weight_files = []
+    valid_sample_counts = []
+
+    # Use weights_path_fednova, not weights_path_sample!
+    for file_name in os.listdir(weights_path_fednova):  # CHANGED HERE
+        if file_name.endswith(".weights.h5"):
+            weight_files.append(os.path.join(weights_path_fednova, file_name))  # CHANGED HERE
+            
+            # Try to match sample count
+            if len(valid_sample_counts) < len(data_lens):
+                valid_sample_counts.append(data_lens[len(valid_sample_counts)])
+
+    total_clients = max(len(os.listdir(weights_path_loss)), 
+                    len(os.listdir(weights_path_sample)),
+                    len(os.listdir(weights_path_avg)),
+                    len(os.listdir(weights_path_fednova)))
+
+    if total_clients >= 2:
         k=0
         global_weights_sum_for_loss = [tf.zeros_like(w) for w in model_loss.get_weights()]
         global_weights_sum = [tf.zeros_like(w) for w in model_sample.get_weights()]
         avg_global_weights = [tf.zeros_like(w) for w in model_avg.get_weights()]
+        
         
     
         total_sample=0
@@ -127,7 +237,7 @@ def landing_page_view(request):
             avg_global_weights = [tf.add(agw, lw) for agw, lw in zip(avg_global_weights, local_weights)]
 
 
-        average_weights = [tf.divide(avgw, i) for avgw in avg_global_weights]
+        average_weights = [tf.divide(avgw, len(models_avg)) for avgw in avg_global_weights]
         average_weights_for_loss = [tf.divide(gws_l, total_loss) for gws_l in global_weights_sum_for_loss]
         average_weights_fedAvg = [tf.divide(gws, total_sample) for gws in global_weights_sum]
 
@@ -142,6 +252,18 @@ def landing_page_view(request):
         final_model_avg=tf.keras.models.load_model("models/with_avg/model.h5")
         final_model_avg.set_weights(average_weights)
         final_model_avg.save('models/with_avg/model.h5')
+        #fednova
+        fednova_weights = fednova_aggregate(
+            weight_files=weight_files,
+            sample_counts=valid_sample_counts,
+            epochs_list=[30] * len(weight_files),  # All trained 21 epochs
+            batch_size=25  # Your batch size
+        )
+        # Create and save FedNova model
+        fednova_model = cnnmodel()
+        fednova_model.set_weights(fednova_weights)
+        fednova_model.save('models/with_fednova/model.h5')
+
 
         #deleting
         
@@ -152,6 +274,9 @@ def landing_page_view(request):
             for f in files:
                 os.unlink(os.path.join(root, f))
         for root, dirs, files in os.walk(weights_path_avg):
+            for f in files:
+                os.unlink(os.path.join(root, f))
+        for root, dirs, files in os.walk(weights_path_fednova):
             for f in files:
                 os.unlink(os.path.join(root, f))
         

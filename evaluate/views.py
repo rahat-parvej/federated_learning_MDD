@@ -77,10 +77,12 @@ def evalute_result(request):
         model_loss= tf.keras.models.load_model("models/with_loss/model.h5")
         model_sample= tf.keras.models.load_model("models/with_sample/model.h5")
         model_avg= tf.keras.models.load_model("models/with_avg/model.h5")
+        model_fednova = tf.keras.models.load_model("models/with_fednova/model.h5")
         score_loss = model_loss.evaluate(data_array, label_array)
         score_sample = model_sample.evaluate(data_array, label_array)
         score_avg = model_avg.evaluate(data_array, label_array)
-        
+        score_fednova = model_fednova.evaluate(data_array, label_array)
+
         # Clean up - remove the uploaded zip file and the temporary directory
         shutil.rmtree(temp_dir)
         loss_score={
@@ -92,8 +94,11 @@ def evalute_result(request):
         avg_score={
             'score_avg':score_avg
         }
+        fednova_score={
+            'score_fednova':score_fednova
+        }
 
-        return render(request, 'evaluate/test_result.html', {**loss_score, **sample_score, **avg_score})
+        return render(request, 'evaluate/test_result.html', {**loss_score, **sample_score, **avg_score, **fednova_score})
         # return render(request, 'evaluate/test_result.html', {'loss': score_loss,'sample': score_sample,'avg': score_avg})
         # return render(request, 'evaluate/test_result.html')
      

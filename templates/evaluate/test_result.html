@@ -181,12 +181,62 @@
                             position: "none"
                         },
                     };
-                    var chart = new google.visualization.ColumnChart(document.getElementById("columnchart_values"));
+                    var chart = new google.visualization.ColumnChart(document.getElementById("chart_for_avg"));
                     chart.draw(view, options);
                 }
             </script>
             
-          <div class="col-md-4" id="columnchart_values"></div>
+          <div class="col-md-4" id="chart_for_avg"></div>
+      </div>
+      <div class="row">
+        <script type="text/javascript">
+                google.charts.load("current", {
+                    packages: ['corechart']
+                });
+                google.charts.setOnLoadCallback(drawChart);
+
+                function drawChart() {
+                    var data = google.visualization.arrayToDataTable([
+                        ["Element", "Value", {
+                            role: "style"
+                        }],
+                        ["Accuracy", {{ score_fednova.1 }}, "blue"],
+                        ["Precision", {{ score_fednova.2 }}, "#ed7d31"],
+                        ["Recall", {{ score_fednova.3 }}, "#a5a5a5"],
+                        ["AUC", {{ score_fednova.4 }}, "#ffc000"]
+                    ]);
+
+                    var view = new google.visualization.DataView(data);
+                    view.setColumns([0, 1,
+                        {
+                            calc: "stringify",
+                            sourceColumn: 1,
+                            type: "string",
+                            role: "annotation"
+                        },
+                        2
+                    ]);
+
+                    var options = {
+                        title: "Scores of FedNova",
+                        
+                        height: 400,
+                        bar: {
+                            groupWidth: "95%"
+                        },
+                        legend: {
+                            position: "none"
+                        },
+                    };
+                    var chart = new google.visualization.ColumnChart(document.getElementById("chart_for_fednova"));
+                    chart.draw(view, options);
+                }
+            </script>
+            
+          <div class="col-md-4" id="chart_for_fednova"></div>
+        
+        <div class="col-md-4"></div>
+        <div class="col-md-4"></div>
       </div>
   </div>
 
