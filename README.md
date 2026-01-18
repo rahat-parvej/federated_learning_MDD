@@ -4,7 +4,7 @@
 [![TensorFlow 2.x](https://img.shields.io/badge/TensorFlow-2.x-FF6F00.svg)](https://www.tensorflow.org/)
 [![Django 4.x](https://img.shields.io/badge/Django-4.x-092E20.svg)](https://www.djangoproject.com/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
-[![DOI](https://img.shields.io/badge/DOI-10.XXXXX/XXXXX-blue)](https://doi.org/)
+<!-- [![DOI](https://img.shields.io/badge/DOI-10.XXXXX/XXXXX-blue)](https://doi.org/) -->
 
 A privacy-preserving web-based federated learning system for detecting Major Depressive Disorder (MDD) using EEG signals. This framework enables multiple healthcare institutions to collaboratively train machine learning models without sharing sensitive patient data.
 
