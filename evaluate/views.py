@@ -13,6 +13,8 @@ import os
 
 import shutil
 
+import time
+
  
 
 # Create your views here.
@@ -78,9 +80,15 @@ def evalute_result(request):
         model_sample= tf.keras.models.load_model("models/with_sample/model.h5")
         model_avg= tf.keras.models.load_model("models/with_avg/model.h5")
         model_fednova = tf.keras.models.load_model("models/with_fednova/model.h5")
+        
         score_loss = model_loss.evaluate(data_array, label_array)
+        
+        
         score_sample = model_sample.evaluate(data_array, label_array)
+        
+
         score_avg = model_avg.evaluate(data_array, label_array)
+
         score_fednova = model_fednova.evaluate(data_array, label_array)
 
         # Clean up - remove the uploaded zip file and the temporary directory

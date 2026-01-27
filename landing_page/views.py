@@ -3,6 +3,7 @@ from django.http import HttpResponse
 from django.shortcuts import render
 import tensorflow as tf
 import numpy as np
+import time
 
 from tensorflow.keras.layers import Conv1D,BatchNormalization,LeakyReLU,MaxPool1D,\
 GlobalAveragePooling1D,Dense,Dropout,AveragePooling1D, Input
@@ -253,12 +254,15 @@ def landing_page_view(request):
         final_model_avg.set_weights(average_weights)
         final_model_avg.save('models/with_avg/model.h5')
         #fednova
+        start_time = time.time()
         fednova_weights = fednova_aggregate(
             weight_files=weight_files,
             sample_counts=valid_sample_counts,
             epochs_list=[30] * len(weight_files),  # All trained 21 epochs
             batch_size=25  # Your batch size
         )
+        end_time = time.time()
+        print("Aggregation time:", end_time - start_time)
         # Create and save FedNova model
         fednova_model = cnnmodel()
         fednova_model.set_weights(fednova_weights)

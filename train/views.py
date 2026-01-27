@@ -17,6 +17,7 @@ from tensorflow.keras.layers import Conv1D,BatchNormalization,LeakyReLU,MaxPool1
 GlobalAveragePooling1D,Dense,Dropout,AveragePooling1D
 from tensorflow.keras.models import Sequential
 from tensorflow.keras.backend import clear_session
+import time
 
 # Create your views here.
 def train_view(request):
@@ -126,13 +127,17 @@ def training_going(request):
             trained_models_sample, sample_model_history, sample_data_len=train_local_model(global_model_sample, X, y)
 
             trained_models_avg, avg_model_history, avg_data_len=train_local_model(global_model_avg, X, y)
-
+            start_time = time.time()
             trained_models_fednova, fednova_model_history, fednova_data_len=train_local_model(global_model_fednova, X, y)
+            end_time = time.time()
 
-            np.save(f'models/results/d4/client_model_loss_history.npy', loss_model_history.history)
-            np.save(f'models/results/d4/client_model_sample_history.npy', sample_model_history.history)
-            np.save(f'models/results/d4/client_model_avg_history.npy', avg_model_history.history)
-            np.save(f'models/results/d4/client_model_fednova_history.npy', fednova_model_history.history)
+            training_time = end_time - start_time
+            print("Local training time:", training_time, "seconds")
+
+            np.save(f'models/results/d3/client_model_loss_history.npy', loss_model_history.history)
+            np.save(f'models/results/d3/client_model_sample_history.npy', sample_model_history.history)
+            np.save(f'models/results/d3/client_model_avg_history.npy', avg_model_history.history)
+            np.save(f'models/results/d3/client_model_fednova_history.npy', fednova_model_history.history)
 
             losses=[]
             samples=[]

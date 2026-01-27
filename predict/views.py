@@ -4,6 +4,7 @@ import mne
 import numpy as np
 from sklearn.preprocessing import StandardScaler
 import tensorflow as tf
+import time
 
 # Create your views here.
 def predict_view(request):
@@ -36,7 +37,10 @@ def pred_result(request):
         data=read_data(temporary_path)
         # # default_storage.delete(file_path)
         data=np.moveaxis(data,1,2)
+        start_time = time.time()
         result=model.predict(data)
+        end_time = time.time()
+        print("Inference time for one EEG segment:", end_time - start_time)
         predict_value=np.mean(result)
         
         
